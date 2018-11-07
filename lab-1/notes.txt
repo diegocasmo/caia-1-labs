@@ -1,0 +1,30 @@
+1. Top left corner, value is 89. Same value when using I(1,1)
+
+2. Contrast is width of pink region, brightness is value at the red dotted line.
+
+3. The Is has more colors, since the single datatype uses more bits.
+
+4. imshow( I + 100);
+
+5. I(I>150) = 150;
+   I(I<50) = 50;
+   imshow(I);
+
+6. Gamma correction affects the luminance of an image. g = 0.5 is brighter than original, and g = 2.0 is darker than the original.
+
+7. Enhances areas with low local contrast to have higher local contrast, by spreading out the bins of the histogram. The first image 'napoleon.png' agrees with theory. We believe that since we are not giving any histogram to match with, the matlab function matches tries to spread out the bins of the new histogram as much as possible. The light image does agree with this.
+
+8. AA more visible when using nearest than when using bilinear. Nearest assigns the value of the new pixle to the equal to the nearest pixel in the old image. Bilinear uses a weighted average of nearby (d <= 2) pixels in the old image. AA smoothes the image, using nearby pixels, thus not having much of an effect on bilinear. Which one is best depends on problem.
+
+9. No ideas.
+
+10. brain_avrg = (brain1 + brain2)/2.0
+
+11. brain_avrg - brain3. Change in top right.
+
+12. Clips values which are out of bounds to 0 and 255, whichever is closest.
+
+13. Pixels not necessarily lining up in the new image, compare to old image, thus needing to interpolate values.
+
+14. Faster because only need to rotate matrix, every pixel will have a match.
+
