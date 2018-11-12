@@ -1,0 +1,9 @@
+1. Average takes average of all pixels in the window, disk and gaussian are weighted filters with different shapes. Shapes given by their names.
+
+2. They are low pass filters, since they all blur. Filtering high frequencies blurs the image. There's nothing to blur when the frequency is low.
+
+3. Low pass is trivial, as they all are low pass filters. For high pass, subtract a low pass filter from an identity filter, see "unsharp masks". For a band pass, use both a low pass and a high pass, to get a band. (?)
+
+4. 
+
+
