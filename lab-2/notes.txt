@@ -4,9 +4,26 @@
 
 3. Low pass is trivial, as they all are low pass filters. For high pass, subtract a low pass filter from an identity filter, see "unsharp masks". For a band pass, use both a low pass and a high pass, to get a band. (?)
 
+5. We did no arithmetic?
+
 8. For each application of the filter, you have to sort the pixels under the mask to find the median. Sorting is comparatively expensive.
 
 10. Imfilter assigns pixels outside the image to value 0, by default. At borders, at least half of the values will therefore be black. High deviation means that all values affect the resulting value equally.
 
+11. How do we interpret the cameraman image? Shall we do log and and abs for future exercises?
+
+12. Imaginary part 0 close to middle index in sequence. Imaginary parts mirrored, with center the middle index. Alternating signs of imaginary parts. For the odd-length vector, the imaginary part 0 has no mirror.
+Why blank out (set to 0) certain frequencies?
+
+13. Low pass filtering by absolute value of pixels, but that is not a circular or square filter? Do we apply an average filter around each point which is too high?
+
+15. In 14, we would have liked to know what we were looking for.
 
 
+
+Questions that we have:
+5 - We did no arithmetic? -Diego
+11 - How do we interpret the cameraman image? -Diego
+12 & 13 - Shall we do log and and abs for these exercises? -Diego
+12 - Why blank out (set to 0) certain frequencies? What is the question/exercise? Filter how? -Erik
+13 - What is the question/exercise? Low pass filter? Are we to set a patch of frequencies to 0? Are we to apply a low pass filter to the frequency values? -Erik
