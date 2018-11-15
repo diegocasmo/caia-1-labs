@@ -4,6 +4,9 @@
 
 3. Low pass is trivial, as they all are low pass filters. For high pass, subtract a low pass filter from an identity filter, see "unsharp masks". For a band pass, use both a low pass and a high pass, to get a band. (?)
 
-4. 
+8. For each application of the filter, you have to sort the pixels under the mask to find the median. Sorting is comparatively expensive.
+
+10. Imfilter assigns pixels outside the image to value 0, by default. At borders, at least half of the values will therefore be black. High deviation means that all values affect the resulting value equally.
+
 
 
