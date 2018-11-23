@@ -10,11 +10,13 @@ Im1_FFT_res = Im1_FFT;
 Im2_FFT_res = Im2_FFT;
 
 % Random, small signals
+% Transfer to frequency domain
 randvec1 = fftshift(fft2(rand(1,5)));
 randvec2 = fftshift(fft2(rand(1,6)));
 
-% filter here?
+% Do filter here? Not needed?
 
+% Transfer back from frequency domain
 resvec1 = ifft2(ifftshift(randvec1));
 resvec2 = ifft2(ifftshift(randvec2));
 

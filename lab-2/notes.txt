@@ -19,7 +19,7 @@ Why blank out (set to 0) certain frequencies?
 
 15. In 14, we would have liked to know what we were looking for.
 
-
+------------
 
 Questions that we have:
 5 - We did no arithmetic? -Diego
@@ -27,3 +27,20 @@ Questions that we have:
 12 & 13 - Shall we do log and and abs for these exercises? -Diego
 12 - Why blank out (set to 0) certain frequencies? What is the question/exercise? Filter how? -Erik
 13 - What is the question/exercise? Low pass filter? Are we to set a patch of frequencies to 0? Are we to apply a low pass filter to the frequency values? -Erik
+
+-------------
+
+5: The code you sent only compute a partial derivative in the x-direction. We want to compute and show the magnitude of the gradient vector (the lecture slides will have more information).
+
+11: It's easier to understand by first looking at lines.png. The point is that you should figure out why the frequency image looks the way it does. Once you figure out the lines.png image, the cameraman should be no problem.
+
+12 & 13: log and abs are just for visualizing the spectrum. You shouldn't use them for anything else  for these questions. 
+
+For question 12, the point is that you __should__ filter the vectors (otherwise the bottom two lines are just undoing the top two, which has no point to it), and if you do it correctly you will have real-valued results. If not, results will be imaginary.
+
+Question 13: Filtering corresponds to multiplication in the Fourier domain, and if you use a filter in the Fourier domain which contain only ones and zeros (for example in the shape of a square or circle) and multiply the image with it, then it's equivalent to setting those frequencies to zero. If you do something a bit more fancy, like using a Gaussian filter, then it's not the same thing as each filter gets attenuated according to the weights determined by a 2D Gaussian function with some standard deviation.
+
+
+
+
+
