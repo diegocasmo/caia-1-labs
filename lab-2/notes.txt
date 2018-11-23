@@ -34,7 +34,7 @@ Questions that we have:
 
 11: It's easier to understand by first looking at lines.png. The point is that you should figure out why the frequency image looks the way it does. Once you figure out the lines.png image, the cameraman should be no problem.
 
-12 & 13: log and abs are just for visualizing the spectrum. You shouldn't use them for anything else  for these questions. 
+12 & 13: log and abs are just for visualizing the spectrum. You shouldn't use them for anything else for these questions. 
 
 For question 12, the point is that you __should__ filter the vectors (otherwise the bottom two lines are just undoing the top two, which has no point to it), and if you do it correctly you will have real-valued results. If not, results will be imaginary.
 
