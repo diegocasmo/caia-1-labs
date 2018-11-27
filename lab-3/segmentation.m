@@ -1,19 +1,31 @@
+% Clear workspace
+clear();
 
+% Read image
 Im_orig = imread('images/coins.tif');
-%Im_orig = Im_orig(1:50, 301:350);
-% pre-process the image
 
+% pre-process the image:
 % grayscale
 Im = imbinarize(Im_orig, graythresh(Im_orig));
 
-% smooth 3x3 mean
+% smooth using mean
 Im = medfilt2(Im, [5,5]);
 
 % distance
 Im_pp = bwdist(Im);
 
-regprops = regionprops(logical(Im_pp), uint8(Im_pp), 'MaxIntensity');
-Radii = [regprops.MaxIntensity];
+% generate labels for coloring of regions
+Im_emax = imextendedmax(Im_pp, 1);
+Im_emax = bwmorph(Im_emax, 'shrink', Inf); % let one dot remain for each region
+[rows, cols] = size(Im_emax);
+Im_emax = uint8(Im_emax);
+for r = 1:rows
+    for c = 1:cols
+        if Im_emax(r,c) == 1
+            Im_emax(r,c) = Im_pp(r,c);
+        end
+    end
+end
 
 % apply watershed segmentation
 Im_seg = Im_pp;
@@ -26,20 +38,36 @@ Im_seg = watershed(Im_seg);
 Im_postp = Im_seg;
 Im_postp(~Im_pp) = 0;
 Im_postp = logical(Im_postp);
+Im_postp = bwmorph(Im_postp, 'erode');
 
 % generate histogram
 regprops = regionprops(Im_postp, 'Area');
 A = [regprops.Area];
-A(A==0)=[];
+A(A<500)=[];
 
-% colour based by labels
-Im_postp = label2rgb(Im_postp);
+% color all regions with same radius with same color
+rp = regionprops(Im_postp, 'ConvexHull');
+Im_postp = uint8(Im_postp);
+for r = 1:rows
+    for c = 1:cols
+        if Im_emax(r,c) > 0 && Im_postp(r,c) > 0
+            Im_postp(r,c) = Im_emax(r,c);
+        end
+    end
+end
+
+for i = 1:length(rp)
+    roi = roipoly(Im_postp, rp(i).ConvexHull(:,1), rp(i).ConvexHull(:,2));
+    Im_postp(roi) = max(Im_postp(roi));
+end
+Im_postp = label2rgb(Im_postp, 'jet', 'k');
 
 % display the result
-figure('Name', 'Coins');
-subplot(2,2,1), imshow(Im_orig);
-subplot(2,2,2), imshow(mat2gray(Im_pp));
-subplot(2,2,3), imshow(mat2gray(Im_seg));
-subplot(2,2,4), imshow(Im_postp);
-figure,
-hist(A);
+figure('Name', 'Segmentation');
+subplot(2,2,1), imshow(Im_orig), title('Original');
+subplot(2,2,2), imshow(mat2gray(Im_pp)), title('Distances');
+subplot(2,2,3), imshow(mat2gray(Im_seg)), title('Segmentation');
+subplot(2,2,4), imshow(Im_postp), title('Final result');
+figure('Name', 'Objects by area'),
+histogram(A, 20);
+
