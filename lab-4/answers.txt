@@ -1,0 +1,15 @@
+Answers:
+
+q1) No. We need both x and y. Assuming there are two clusters, there's no way a vertical/horizontal line can separate them.
+
+q2) The histogram shows two 'clusters' of intensity, so using thresholding won't be able to separate those two clusters into three. This is because the ring (object) and the hand have roughly the same intensity values.
+
+q3) Supervised classification with a linear discriminant. It assumes the data can be linearly separable.
+
+q4) Yes. The three objects in the image can now be correctly classified.
+
+Single band is better at separating the hand from the background because these two have different intensities of red, but it doesn't do as well when separating the object (ring) from the background (likely because neither of them have enough 'redness'). Grayscale has issues separating the hand from the object, as both of them have higher intensity values than the background.
+
+Yes, using the three bands gives a much better result.
+
+q5)
