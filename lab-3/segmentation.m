@@ -60,7 +60,7 @@ for i = 1:length(rp)
     roi = roipoly(Im_postp, rp(i).ConvexHull(:,1), rp(i).ConvexHull(:,2));
     Im_postp(roi) = max(Im_postp(roi));
 end
-Im_postp = label2rgb(Im_postp, 'jet', 'k');
+Im_postp = label2rgb(Im_postp, 'prism', 'k');
 
 % display the result
 figure('Name', 'Segmentation');
