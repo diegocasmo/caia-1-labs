@@ -38,12 +38,14 @@ Im_seg = watershed(Im_seg);
 Im_postp = Im_seg;
 Im_postp(~Im_pp) = 0;
 Im_postp = logical(Im_postp);
-Im_postp = bwmorph(Im_postp, 'erode');
 
 % generate histogram
 regprops = regionprops(Im_postp, 'Area');
 A = [regprops.Area];
 A(A<500)=[];
+
+% erode to remove small components
+Im_postp = bwmorph(Im_postp, 'erode');
 
 % color all regions with same radius with same color
 rp = regionprops(Im_postp, 'ConvexHull');
