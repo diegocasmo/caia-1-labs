@@ -117,6 +117,22 @@ keep('I','template','mask','cutouts','nrOfObjects');%'objectMap');
 
 % Place for your own texture analysis. 
 
+for i = 1:nrOfObjects
+    GCM = graycomatrix(cutouts{i}, "Offset", [-1 1]);
+    stats = graycoprops(GCM);
+    U(i) = stats.Energy; % uniformity
+    E(i) = entropy(cutouts{i}); % entropy
+end
 
+% plot uniformity and entropy
+figure();
+scatter(1:nrOfObjects, U);
+title("Uniformity");
 
+figure();
+scatter(1:nrOfObjects, E);
+title("Entropy");
 
+figure();
+scatter(1:nrOfObjects,E .* U);
+title("Uniformity * Entropy");

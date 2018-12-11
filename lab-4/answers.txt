@@ -15,3 +15,5 @@ Yes, using the three bands gives a much better result.
 q5) Using bands 3,4,5 and 6, motivated by histograms. Using diagonal linear classifier, quadratic classifier gives error saying that the covariance matrix for some training group is not positive definite.
 
 q6) The histogram of some of the bands look pretty much the same, so in terms of classification in doesn't make too much sense to include them since they represent almost the same data/features.
+
+q7) The offset seem to make no difference for the uniformity? Are we computing entropy correctly? Values in the plot are not of magnitude 10^7, but outliers are easily identifiable. We do not understand why we are using the co-occurrence matrix?
