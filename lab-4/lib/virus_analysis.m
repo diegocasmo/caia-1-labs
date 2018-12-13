@@ -116,7 +116,8 @@ keep('I','template','mask','cutouts','nrOfObjects');%'objectMap');
 
 
 % Place for your own texture analysis. 
-
+U = zeros(nrOfObjects,1);
+E = zeros(nrOfObjects,1);
 for i = 1:nrOfObjects
     GCM = graycomatrix(cutouts{i}, "Offset", [-1 1]);
     stats = graycoprops(GCM);
