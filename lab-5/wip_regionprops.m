@@ -4,22 +4,18 @@ clear();
 % Currently gives 0.935833 precision, with a runtime of ~20s
 % Code is quite currently quite disorganised, and does not follow the required format
 
-global debug
-debug = 1;
-
 tic
 true_labels = importdata('labels.txt');
 my_labels = zeros(size(true_labels));
 N = size(true_labels,1);
-l = 1; % 1
-u = 1200; % N
-for k = l:u 
+l = 1; % lower bound, default 1
+u = 1200; % upper bound, default N
+for k = l:u
     im = imread(sprintf('imagedata/train_%04d.png', k));
     my_labels(k,:) = mclassifier(im);
-    debug = debug +1;
 end
 
-errors = 0;
+errors = 0; % counting number of wrong digits
 for i = l:u
     if my_labels(i,1) ~= true_labels(i,1)
         errors = errors +1;
@@ -41,26 +37,28 @@ fprintf('\n\nAverage precision: \n');
 fprintf('%f\n\n',mean(sum(abs(true_labels(l:u,:) - my_labels(l:u,:)),2)==0));
 toc
 
-function res = mclassifier(Im)
+function result = mclassifier(Im)
 
-    global debug
-
+    % clean the image to remove noise,
+    % and skeletonize the numbers
     Im = imclean(Im);
-    Im = ~Im;
+    Im = ~Im; % make the background pixels have value 0
     
+    % compute properties of the regions
     RP = regionprops(Im, 'Extrema', 'EulerNumber', 'Image');
     Ext = cat(1,RP.Extrema);
-    
-    tol = 2;
-    
     E = cat(1,RP.EulerNumber);
     nObjects = length(RP);
-
-    result = zeros(3,1);
     
+    % how much wider is a 2 than a 1?
+    % the number is experimentally derived, to
+    % get the best performance on the training data
+    tol = 2; 
+    result = zeros(3,1); % pre-allocate for performance, and ensure that None is never returned
+    % The case where no digits overlap:
     if nObjects == 3
         for i = 1:3
-            if E(i) == 0
+            if E(i) == 0 % only zeros have holes
                 result(i) = 0;
             else
                 if abs(Ext(8*(i-1)+4, 1) - Ext(8*(i-1)+2, 1)) < tol
@@ -70,8 +68,8 @@ function res = mclassifier(Im)
                 end
             end
         end
-    else
-        if nObjects == 2
+    else % The case where two digits overlap:
+        if nObjects == 2 % We don't think there is training data where all digits overlap?
             Images = {RP.Image};
             Height(1) = size(Images{1},1);
             Height(2) = size(Images{2},1);
@@ -81,15 +79,18 @@ function res = mclassifier(Im)
             if  Width(1) > Width(2)
                 % split the first component
                 Images{1} = bwmorph(Images{1}, 'thicken',1); % makes finding a split a little more consistent
-                split = findSplit2(Images{1}, Width(1), Height(1));
+                split = findSplit2(Images{1}, Width(1), Height(1)); % find x-coordinate of split
                 Images{1} = bwmorph(Images{1}, 'thicken',1); % ensure we don't cut open a 0
-                Images{1}(:,floor(split)) = 0;
+                Images{1}(:,floor(split)) = 0; % do split
                 % classify the first two numbers
                 RP = regionprops(Images{1}, 'Extrema', 'EulerNumber', 'Area');
                 Extc = cat(1,RP.Extrema);
                 Ec = cat(1,RP.EulerNumber);
                 Ac = cat(1,RP.Area);
-                if length(RP) == 3 && Ac(2) < Ac(3) % In case a third component was created by splitting
+                % In case a third component was created by splitting, 
+                % and its area is larger than the second component,
+                % copy its values to the second component
+                if length(RP) == 3 && Ac(2) < Ac(3) 
                     Extc(9) = Extc(17);Extc(10) = Extc(18);
                     Extc(11) = Extc(19);Extc(12) = Extc(20);
                     Extc(13) = Extc(21);Extc(14) = Extc(22);
@@ -97,7 +98,7 @@ function res = mclassifier(Im)
                     Ec(2) = Ec(3);
                 end
                 for i = 1:2
-                    if Ec(i) == 0
+                    if Ec(i) == 0 % only zeros have holes
                         result(i) = 0;
                     else
                         if abs(Extc(8*(i-1)+4, 1) - Extc(8*(i-1)+2, 1)) < tol
@@ -108,7 +109,7 @@ function res = mclassifier(Im)
                     end
                 end
                 % classify the last number
-                if E(2) == 0
+                if E(2) == 0 % only zeros have holes
                     result(3) = 0;
                 else
                     if abs(Ext(8*1+4, 1) - Ext(8*1+2, 1)) < tol
@@ -119,7 +120,7 @@ function res = mclassifier(Im)
                 end
             else % else, the second component is two numbers
                 % classify the first number
-                if E(1) == 0
+                if E(1) == 0 % only zeros have holes
                     result(1) = 0;
                 else
                     if abs(Ext(4, 1) - Ext(2, 1)) < tol
@@ -130,15 +131,18 @@ function res = mclassifier(Im)
                 end
                 % split the second component
                 Images{2} = bwmorph(Images{2}, 'thicken',1); % makes finding a split a little more consistent
-                split = findSplit2(Images{2}, Width(2), Height(2));
+                split = findSplit2(Images{2}, Width(2), Height(2)); % find x-coordinate of split
                 Images{2} = bwmorph(Images{2}, 'thicken',1); % ensure we don't cut open a 0
-                Images{2}(:,floor(split)) = 0;
+                Images{2}(:,floor(split)) = 0; % do split
                 % classify the first two numbers
                 RP = regionprops(Images{2}, 'Extrema', 'EulerNumber', 'Area');
                 Extc = cat(1,RP.Extrema);
                 Ec = cat(1,RP.EulerNumber);
                 Ac = cat(1,RP.Area);
-                if length(RP) == 3 && Ac(2) < Ac(3) % In case a third component was created by splitting
+                % In case a third component was created by splitting, 
+                % and its area is larger than the second component,
+                % copy its values to the second component
+                if length(RP) == 3 && Ac(2) < Ac(3)
                     Extc(9) = Extc(17);Extc(10) = Extc(18);
                     Extc(11) = Extc(19);Extc(12) = Extc(20);
                     Extc(13) = Extc(21);Extc(14) = Extc(22);
@@ -147,7 +151,7 @@ function res = mclassifier(Im)
                 end
                 % classify the last numbers
                 for i = 1:2
-                    if Ec(i) == 0
+                    if Ec(i) == 0 % only zeros have holes
                         result(i+1) = 0;
                     else
                         if abs(Extc(8*(i-1)+4, 1) - Extc(8*(i-1)+2, 1)) < tol
@@ -160,27 +164,15 @@ function res = mclassifier(Im)
             end
         end
     end
-
-    if debug == 69
-        x = 1;
-    end
-    
-    res = result;
-    
 end
 
 % find the x-coordinate of where to split the passed component into two,
 % so that the numbers detected are the same
 function res = findSplit2(Im, width, height)
 
-    global debug
-
-    if debug == 31
-        x = 1;
-    end
-    
-    Im = ~Im;
-    ubound = floor(width*0.75);
+    Im = ~Im; % invert, so that what was the background is now a set of regions
+    % only consider splits within these coordinates
+    ubound = floor(width*0.75); 
     lbound = floor(width*0.25);
     Im = Im(:,lbound:ubound);
     
@@ -188,9 +180,11 @@ function res = findSplit2(Im, width, height)
     nObjects = length(RP);
     Ext = cat(1,RP.Extrema);
     
+    % default split
     minx = width*0.5 - lbound / 2.0;
     miny = height*0.5; % split in the middle if nothing good enough is found
     
+    % split in the x-coordinate where the highest "bottom-right" pixel is
     for i = 1:nObjects
         x = Ext(8*(i-1)+5, 1);
         y = Ext(8*(i-1)+5, 2);
@@ -199,5 +193,7 @@ function res = findSplit2(Im, width, height)
             minx = x;
         end
     end
+    % add lbound, since we removed it earlier
+    % also, subtracting 1 improves the resulting performance on the test images, don't know why
     res = minx + lbound -1;
 end
