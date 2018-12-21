@@ -11,21 +11,34 @@ tic
 true_labels = importdata('labels.txt');
 my_labels = zeros(size(true_labels));
 N = size(true_labels,1);
-for k = 1:N
+l = 1; % 1
+u = 1200; % N
+for k = l:u 
     im = imread(sprintf('imagedata/train_%04d.png', k));
     my_labels(k,:) = mclassifier(im);
     debug = debug +1;
 end
 
-for i = 1:N
-    if my_labels(i,1) ~= true_labels(i,1) || my_labels(i,2) ~= true_labels(i,2) || my_labels(i,3) ~= true_labels(i,3)  
+errors = 0;
+for i = l:u
+    if my_labels(i,1) ~= true_labels(i,1)
+        errors = errors +1;
+    end
+    if my_labels(i,2) ~= true_labels(i,2)
+       errors = errors +1;
+    end
+    if my_labels(i,3) ~= true_labels(i,3)
+       errors = errors +1;
+    end 
+    if my_labels(i,1) ~= true_labels(i,1) || my_labels(i,2) ~= true_labels(i,2) || my_labels(i,3) ~= true_labels(i,3)
         fprintf("\nerror at image %d\n", i);
         fprintf("predicted [%d %d %d], but true is [%d %d %d]\n", my_labels(i,1), my_labels(i,2), my_labels(i,3), true_labels(i,1), true_labels(i,2), true_labels(i,3));
     end
 end
 
+fprintf("\ntotal number of errors: %d\n", errors);
 fprintf('\n\nAverage precision: \n');
-fprintf('%f\n\n',mean(sum(abs(true_labels - my_labels),2)==0));
+fprintf('%f\n\n',mean(sum(abs(true_labels(l:u,:) - my_labels(l:u,:)),2)==0));
 toc
 
 function res = mclassifier(Im)
