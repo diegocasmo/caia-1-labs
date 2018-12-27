@@ -132,4 +132,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.gitignore.io/api/osx,linux,matlab,windows,sublimetext
+# Ignore dataset and labels (no need to keep track of it, as it does not change)
+/lab-5/imagedata/*
+/lab-5/labels.txt
