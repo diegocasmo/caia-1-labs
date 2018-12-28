@@ -1,14 +1,10 @@
 tic
-
-% Load trained network
-load './trained_net';
-
 true_labels = importdata('labels.txt');
 my_labels = zeros(size(true_labels));
 N = size(true_labels,1);
 for k = 1:N
     im = imread(sprintf('imagedata/train_%04d.png', k));
-    my_labels(k,:) = myclassifier(im,trained_net);
+    my_labels(k,:) = myclassifier(im);
 end
 
 fprintf('\n\nAverage precision: \n');
