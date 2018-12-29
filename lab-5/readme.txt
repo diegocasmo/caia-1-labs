@@ -1,4 +1,4 @@
-Submission of team <teamname>
+Submission of team "clde"
 Castillo, Diego: Diego.Castillo.9146@student.uu.se
 Larsson, Erik: Erik.Larsson.2996@student.uu.se
 
